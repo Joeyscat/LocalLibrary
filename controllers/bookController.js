@@ -25,5 +25,13 @@ exports.book_detail = (req, res) => {
   res.send('未实现：请求藏书')
 }
 exports.book_list = (req, res) => {
-  res.send('未实现：请求藏书列表')
+  Book.find({}, '', (err, books) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+    console.log(books)
+    res.json(books)
+  })
+
 }

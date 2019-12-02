@@ -6,11 +6,11 @@
 #### Software Architecture
 Software architecture description
 
-#### Installation
+#### 安装使用
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  下载或克隆源码
+2.  项目根目录下执行 npm i
+3.  npm run devstart
 
 #### Instructions
 

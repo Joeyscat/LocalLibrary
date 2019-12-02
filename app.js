@@ -11,6 +11,22 @@ const catalogRouter = require('./routes/catalog');  // 导入 catalog 路由
 
 var app = express();
 
+// Express 教程 3：使用数据库 (Mongoose)
+// https://developer.mozilla.org/zh-CN/docs/learn/Server-side/Express_Nodejs/mongoose
+// 导入 mongoose 模块
+const mongoose = require('mongoose');
+
+// 设置默认 mongoose 连接
+const mongoDB = "mongodb://<username>:<password>@<ip>:27017/<db>"
+mongoose.connect(mongoDB);
+// 让 mongoose 使用全局 Promise 库
+mongoose.Promise = global.Promise;
+// 取得默认连接
+const db = mongoose.connection;
+
+// 将连接与错误事件绑定（以获得连接错误的提示）
+db.on('error', console.error.bind(console, 'MongoDB 连接错误：'));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
