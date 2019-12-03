@@ -5,7 +5,7 @@ Software architecture description
 
 #### 安装使用
 
-1.  下载或克隆源码
+1.  下载或克隆源码 https://gitee.com/Joeyscat/LocalLibrary.git
 2.  项目根目录下执行 npm i
 3.  npm run devstart
 

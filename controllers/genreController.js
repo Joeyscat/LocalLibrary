@@ -1,8 +1,8 @@
 const Genre = require('../models/genre')
 const Book = require('../models/book')
 const async = require('async')
-const { body, validationResult } = require('express-validator/check');
-const { sanitizeBody } = require('express-validator/filter');
+const { body, validationResult } = require('express-validator');
+const { sanitizeBody } = require('express-validator');
 
 // 显示完整的类型列表
 exports.genre_list = (req, res, next) => {
@@ -28,9 +28,7 @@ exports.genre_detail = (req, res, next) => {
         .exec(callback)
     }
   }, (err, results) => {
-    if (err) {
-      return next(err)
-    }
+    if (err) { return next(err) }
     if (results.genre == null) {
       const err = new Error('找不到该类型')
       err.status = 404
@@ -64,16 +62,12 @@ exports.genre_create_post = [
     } else {
       Genre.findOne({ 'name': req.body.name })
         .exec(function (err, found_genre) {
-          if (err) {
-            return next(err)
-          }
+          if (err) { return next(err) }
           if (found_genre) {
             res.redirect(found_genre.url)
           } else {
             genre.save(function (err) {
-              if (err) {
-                return next(err)
-              }
+              if (err) { return next(err) }
               res.redirect(genre.url)
             })
           }

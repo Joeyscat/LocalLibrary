@@ -1,7 +1,7 @@
 const BookInstance = require('../models/bookinstance')
 const Book = require('../models/book')
-const { body, validationResult } = require('express-validator/check');
-const { sanitizeBody } = require('express-validator/filter');
+const { body, validationResult } = require('express-validator');
+const { sanitizeBody } = require('express-validator');
 
 
 // 显示完整的书籍实例列表

@@ -17,7 +17,7 @@ var app = express();
 const mongoose = require('mongoose');
 
 // 设置默认 mongoose 连接
-mongoose.connect(mongoDBUri);
+mongoose.connect(mongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 // 让 mongoose 使用全局 Promise 库
 mongoose.Promise = global.Promise;
 // 取得默认连接
