@@ -1,8 +1,6 @@
 const bookService = require('../../service/bookService')
 
 exports.book_detail = (req, res, next) => {
-  const id = mongoose.Types.ObjectId(req.params.id)
-
   const resolve = book => {
     res.json(book)
   }
@@ -10,7 +8,7 @@ exports.book_detail = (req, res, next) => {
     return next(error)
   }
 
-  bookService.book_detail(id, resolve, reject)
+  bookService.book_detail(req.params.id, resolve, reject)
 }
 
 exports.book_list = (req, res, next) => {
