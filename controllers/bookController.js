@@ -239,7 +239,6 @@ exports.book_detail = (req, res, next) => {
       book_instances: results.book_instance
     })
   })
-
 }
 
 exports.book_list = (req, res, next) => {
