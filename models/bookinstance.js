@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const Schema = mongoose.Schema;
 
@@ -17,10 +18,18 @@ const BookInstanceSchema = new Schema({
 }
 );
 
+// 虚拟属性'due_back_formatted'：藏书副本 格式化的归还日期
+BookInstanceSchema
+  .virtual('due_back_formatted')
+  .get(() => {
+    return moment(this.due_back).format('YYYY/MM/DD')
+  })
+
+
 // 虚拟属性'url'：藏书副本 URL
 BookInstanceSchema
   .virtual('url')
-  .get(function () {
+  .get(() => {
     return '/catalog/bookinstance/' + this._id;
   });
 

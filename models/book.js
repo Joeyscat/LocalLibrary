@@ -18,5 +18,7 @@ BookSchema
     return '/catalog/book/' + this._id;
   });
 
+// 模式 -> 模块
+
 // 导出 Book 模块
 module.exports = mongoose.model('Book', BookSchema);

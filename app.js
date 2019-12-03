@@ -7,7 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const catalogRouter = require('./routes/catalog');  // 导入 catalog 路由
-
+const mongoDBUri = require('./secret')
 
 var app = express();
 
@@ -17,8 +17,7 @@ var app = express();
 const mongoose = require('mongoose');
 
 // 设置默认 mongoose 连接
-const mongoDB = "mongodb://<username>:<password>@<ip>:27017/<db>"
-mongoose.connect(mongoDB);
+mongoose.connect(mongoDBUri);
 // 让 mongoose 使用全局 Promise 库
 mongoose.Promise = global.Promise;
 // 取得默认连接

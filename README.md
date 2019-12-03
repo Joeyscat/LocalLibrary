@@ -12,7 +12,7 @@ Software architecture description
 2.  项目根目录下执行 npm i
 3.  npm run devstart
 
-#### Instructions
+#### 介绍
 
 1.  xxxx
 2.  xxxx
