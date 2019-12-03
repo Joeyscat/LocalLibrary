@@ -3,6 +3,8 @@ const Author = require('../models/author')
 const Genre = require('../models/genre')
 const BookInstance = require('../models/bookinstance')
 const mongoose = require('mongoose');
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
 
 const async = require('async')
 
@@ -31,12 +33,82 @@ exports.index = (req, res) => {
 }
 
 exports.book_create_get = (req, res) => {
-  res.send('未实现：添加新的藏书')
+  async.parallel({
+    authors: function (callback) {
+      Author.find(callback);
+    },
+    genres: function (callback) {
+      Genre.find(callback);
+    },
+  }, function (err, results) {
+    if (err) { return next(err); }
+    res.render('book_form', { title: 'Create Book', authors: results.authors, genres: results.genres });
+  });
 }
 
-exports.book_create_post = (req, res) => {
-  res.send('未实现：添加新的藏书')
-}
+exports.book_create_post = [
+  (req, res, next) => {
+    let genre = req.body.genre
+    if (!(genre instanceof Array)) {
+      if (typeof genre === 'undefined') {
+        req.body.genre = new Array()
+      } else {
+        req.body.genre = new Array(genre)
+      }
+    }
+    console.log(req.body)
+    next()
+  },
+
+  body('title', '书名不能为空').trim().isLength({ min: 1 }),
+  body('author', '作者不能为空').trim().isLength({ min: 1 }),
+  body('summary', '简介不能为空').trim().isLength({ min: 1 }),
+  body('isbn', 'ISBN不能为空').trim().isLength({ min: 1 }),
+  body('genre', '需选择至少一个类型').isLength({ min: 1 }),
+  // TODO .trim()会把genre数组变为一个string，其值为第一个元素
+  // sanitizeBody('*').trim().escape(),
+  // sanitizeBody('genre.*').escape(),
+
+  (req, res, next) => {
+    console.log(req.body)
+    const errors = validationResult(req)
+
+    const book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      summary: req.body.summary,
+      isbn: req.body.isbn,
+      genre: req.body.genre
+    })
+
+    if (!errors.isEmpty()) {
+      async.parallel({
+        authors: function (callback) {
+          Author.find(callback);
+        },
+        genres: function (callback) {
+          Genre.find(callback);
+        },
+      }, function (err, results) {
+        if (err) { return next(err); }
+        for (let i = 0; i < results.genres.length; i++) {
+          if (book.genre.indexOf(results.genres[i]._id) > -1) {
+            results.genres[i].checked = 'true'
+          }
+        }
+        res.render('book_form', { title: 'Create Book', authors: results.authors, genres: results.genres, book: book, errors: errors.array() });
+      });
+      return
+    } else {
+      book.save(function (err) {
+        if (err) {
+          return next(err)
+        }
+        res.redirect(book.url)
+      })
+    }
+  }
+]
 
 exports.book_delete_get = (req, res) => {
   res.send('未实现：删除藏书')

@@ -1,9 +1,11 @@
 const Author = require('../models/author');
 const Book = require('../models/book');
 const async = require('async')
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
 
 // 显示完整的作者列表
-exports.author_list = (req, res) => {
+exports.author_list = (req, res, next) => {
   Author.find()
     .sort([['family_name', 'ascending']])
     .exec(function (err, list_authors) {
@@ -14,7 +16,7 @@ exports.author_list = (req, res) => {
 };
 
 // 为每位作者显示详细信息的页面
-exports.author_detail = (req, res) => {
+exports.author_detail = (req, res, next) => {
   const id = req.params.id
   async.parallel({
     author: (callback) => {
@@ -41,10 +43,44 @@ exports.author_detail = (req, res) => {
 };
 
 // 由 GET 显示创建作者的表单
-exports.author_create_get = (req, res) => { res.send('未实现：作者创建表单的 GET'); };
+exports.author_create_get = (req, res, next) => { res.render('author_form', { title: 'Create Author' }) };
 
 // 由 POST 处理作者创建操作
-exports.author_create_post = (req, res) => { res.send('未实现：创建作者的 POST'); };
+exports.author_create_post = [
+  body('first_name').trim().isLength({ min: 1 }).withMessage('名字不能为空'),
+  body('family_name').trim().isLength({ min: 1 }).withMessage('姓氏不能为空'),
+  body('date_of_birth', '该日期不可用').optional({ checkFalsy: true }).isISO8601(),
+  body('date_of_death', '该日期不可用').optional({ checkFalsy: true }).isISO8601(),
+
+  sanitizeBody('first_name').trim().escape(),
+  sanitizeBody('family_name').trim().escape(),
+  sanitizeBody('date_of_birth'),
+  sanitizeBody('date_of_death'),
+
+  (req, res, next) => {
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      console.log('body校验异常', req.body)
+      res.render('author_form', { title: 'Create Author', author: req.body, errors: errors.array() })
+      return
+    } else {
+      var author = new Author({
+        first_name: req.body.first_name,
+        family_name: req.body.family_name,
+        date_of_birth: req.body.date_of_birth,
+        date_of_death: req.body.date_of_death
+      })
+
+      author.save(function (err) {
+        if (err) {
+          return next(err)
+        }
+        res.redirect(author.url)
+      })
+    }
+  }
+]
 
 // 由 GET 显示删除作者的表单
 exports.author_delete_get = (req, res) => { res.send('未实现：作者删除表单的 GET'); };
