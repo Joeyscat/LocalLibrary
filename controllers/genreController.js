@@ -1,4 +1,6 @@
 const Genre = require('../models/genre')
+const Book = require('../models/book')
+const async = require('async')
 
 // 显示完整的类型列表
 exports.genre_list = (req, res, next) => {
@@ -11,8 +13,31 @@ exports.genre_list = (req, res, next) => {
     });
 };
 
-// 为每位类型显示详细信息的页面
-exports.genre_detail = (req, res) => { res.send('未实现：类型详细信息：' + req.params.id); };
+// 为每个类型显示详细信息的页面
+exports.genre_detail = (req, res, next) => {
+  async.parallel({
+    genre: (callback) => {
+      Genre.findById(req.params.id)
+        .exec(callback)
+    },
+
+    genre_books: (callback) => {
+      Book.find({ 'genre': req.params.id })
+        .exec(callback)
+    }
+  }, (err, results) => {
+    if (err) {
+      return next(err)
+    }
+    if (results.genre == null) {
+      const err = new Error('找不到该类型')
+      err.status = 404
+      return next(err)
+    }
+    // res.json({ title: 'Genre Detail', genre: results.genre, genre_books: results.genre_books })
+    res.render('genre_detail', { title: 'Genre Detail', genre: results.genre, genre_books: results.genre_books })
+  })
+};
 
 // 由 GET 显示创建类型的表单
 exports.genre_create_get = (req, res) => { res.send('未实现：类型创建表单的 GET'); };

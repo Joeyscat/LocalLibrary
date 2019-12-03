@@ -29,15 +29,15 @@ AuthorSchema
 // 虚拟属性'date_of_birth_formatted'：格式化的作者出生日期
 AuthorSchema
   .virtual('date_of_birth_formatted')
-  .get(() => {
-    return moment(this.date_of_birth).format('YYYY/MM/DD')
+  .get(function () {
+    return this.date_of_birth ? moment(this.date_of_birth).format('YYYY/MM/DD') : ''
   });
 
 // 虚拟属性'date_of_death_formatted'：格式化的作者去世日期
 AuthorSchema
   .virtual('date_of_death_formatted')
-  .get(() => {
-    return moment(this.date_of_death).format('YYYY/MM/DD')
+  .get(function () {
+    return this.date_of_death ? moment(this.date_of_death).format('YYYY/MM/DD') : ''
   });
 
 // 虚拟属性'url'：作者 URL

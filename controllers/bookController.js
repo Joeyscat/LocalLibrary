@@ -2,6 +2,7 @@ const Book = require('../models/book')
 const Author = require('../models/author')
 const Genre = require('../models/genre')
 const BookInstance = require('../models/bookinstance')
+const mongoose = require('mongoose');
 
 const async = require('async')
 
@@ -53,8 +54,41 @@ exports.book_update_post = (req, res) => {
   res.send('未实现：更新藏书')
 }
 
-exports.book_detail = (req, res) => {
-  res.send('未实现：请求藏书')
+exports.book_detail = (req, res, next) => {
+  const id = mongoose.Types.ObjectId(req.params.id);
+  async.parallel({
+    book: (callback) => {
+      Book.findById(id)
+        .populate('author')
+        .populate('genre')
+        .exec(callback)
+    },
+    book_instance: (callback) => {
+      BookInstance.find({ 'book': id })
+        .exec(callback)
+    }
+  }, (err, results) => {
+    if (err) {
+      return next(err)
+    }
+    if (results.book == null) {
+      const err = new Error('找不到该书籍')
+      err.status = 404
+      return next(err)
+    }
+    // res.json({
+    //   title: results.book.title,
+    //   book: results.book,
+    //   book_instances: results.book_instance
+    // })
+    console.log(results.book_instance)
+    res.render('book_detail', {
+      title: results.book.title,
+      book: results.book,
+      book_instances: results.book_instance
+    })
+  })
+
 }
 
 exports.book_list = (req, res, next) => {
