@@ -11,36 +11,36 @@ const author_controller = require('../../controllers/api/authorController')
 /// 藏书路由 ///
 
 // 添加新的藏书
-router.post('/book', validateRequest.book_update_validate, book_controller.book_create)
+router.post('/book', validateRequest.book_update_validate, book_controller.create)
 
 // 删除藏书
-router.delete('/book/:id', book_controller.book_delete)
+router.delete('/book/:id', book_controller.delete)
 
 // 更新藏书
-router.put('/book/:id', validateRequest.book_update_validate, book_controller.book_update)
+router.put('/book/:id', validateRequest.book_update_validate, book_controller.update)
 
 // 请求藏书
-router.get('/book/:id', book_controller.book_detail)
+router.get('/book/:id', book_controller.detail)
 
 // 请求完整藏书列表
-router.get('/books', book_controller.book_list)
+router.get('/books', book_controller.list)
 
 /// AUTHOR ROUTES ///
 
-// creating Author.
-router.post('/author', author_controller.author_create)
+// 添加新作者
+router.post('/author', validateRequest.author_update_validate, author_controller.create)
 
-// delete Author.
-router.delete('/author/:id', author_controller.author_delete)
+// 删除作者
+router.delete('/author/:id', author_controller.delete)
 
-// update Author.
-router.put('/author/:id', author_controller.author_update)
+// 更新作者
+router.put('/author/:id', validateRequest.author_update_validate, author_controller.update)
 
-// GET request for one Author.
-router.get('/author/:id', author_controller.author_detail)
+// 请求作者详情
+router.get('/author/:id', author_controller.detail)
 
-// GET request for list of all Authors.
-router.get('/authors', author_controller.author_list)
+// 请求所有作者
+router.get('/authors', author_controller.list)
 
 /// GENRE ROUTES ///
 /*

@@ -25,3 +25,13 @@ exports.book_update_validate = [
   sanitizeBody('summary').trim().escape(),
   sanitizeBody('isbn').trim().escape()
 ]
+
+exports.author_update_validate = [
+  body('first_name', '名字不能为空').trim().isLength({ min: 1 }),
+  body('family_name', '姓氏不能为空').trim().isLength({ min: 1 }),
+
+  sanitizeBody('first_name').trim().escape(),
+  sanitizeBody('family_name').trim().escape(),
+  sanitizeBody('date_of_birth').trim().escape(),
+  sanitizeBody('date_of_death').trim().escape()
+]

@@ -1,8 +1,8 @@
-const bookService = require('../../service/bookService')
+const service = require('../../service/bookService')
 const { validationResult } = require('express-validator');
 
 
-exports.book_create = (req, res, next) => {
+exports.create = (req, res, next) => {
   const errors = validationResult(req)
   console.error(errors)
 
@@ -10,20 +10,20 @@ exports.book_create = (req, res, next) => {
     res.json({ errors: errors.array() });
   } else {
     const resolve = book => {
-      bookService.book_detail(book._id, (bookDetail) => { res.json(bookDetail) }, next)
+      service.detail(book._id, (bookDetail) => { res.json(bookDetail) }, next)
     }
-    bookService.book_create(req, resolve, next)
+    service.create(req, resolve, next)
   }
 }
 
-exports.book_delete = (req, res, next) => {
+exports.delete = (req, res, next) => {
 
-  bookService.book_delete(req.params.id, (result) => {
+  service.delete(req.params.id, (result) => {
     res.json(result)
   }, next)
 }
 
-exports.book_update = (req, res, next) => {
+exports.update = (req, res, next) => {
   const errors = validationResult(req)
   console.error(errors)
 
@@ -31,22 +31,22 @@ exports.book_update = (req, res, next) => {
     res.json({ errors: errors.array() });
   } else {
     const resolve = book => {
-      bookService.book_detail(book._id, (bookDetail) => { res.json(bookDetail) }, next)
+      service.detail(book._id, (bookDetail) => { res.json(bookDetail) }, next)
     }
-    bookService.book_update(req, resolve, next)
+    service.update(req, resolve, next)
   }
 }
 
-exports.book_detail = (req, res, next) => {
+exports.detail = (req, res, next) => {
 
-  bookService.book_detail(req.params.id, (book) => {
+  service.detail(req.params.id, (book) => {
     res.json(book)
   }, next)
 }
 
-exports.book_list = (req, res, next) => {
+exports.list = (req, res, next) => {
 
-  bookService.book_list((books) => {
+  service.list((books) => {
     res.json(books)
   }, next)
 }

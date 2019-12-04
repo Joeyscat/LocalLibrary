@@ -2,7 +2,7 @@ const Book = require('../models/book')
 const mongoose = require('mongoose')
 
 
-exports.book_create = (req, resolve, reject) => {
+exports.create = (req, resolve, reject) => {
   console.log(req.body)
 
   const book = new Book({
@@ -14,26 +14,28 @@ exports.book_create = (req, resolve, reject) => {
   })
 
   book.save(function (err) {
-    if (err) { return reject(err) }
-    resolve(book)
+    if (err) { return reject(err) } else {
+      resolve(book)
+    }
   })
 }
 
-exports.book_delete = (id, resolve, reject) => {
+exports.delete = (id, resolve, reject) => {
   id = mongoose.Types.ObjectId(id)
   Book.findById(id, (err, book) => {
     if (err) { return reject(err); }
     if (book != null) {
       Book.findByIdAndRemove(id, (err) => {
         if (err) { return reject(err); }
-        resolve({ id })
+        return resolve({ id })
       })
+    } else {
+      reject({ msg: '找不到该书籍' })
     }
-    reject({ msg: '找不到该书籍' })
   })
 }
 
-exports.book_update = (req, resolve, reject) => {
+exports.update = (req, resolve, reject) => {
 
   id = mongoose.Types.ObjectId(req.params.id)
   const book = new Book({
@@ -44,19 +46,19 @@ exports.book_update = (req, resolve, reject) => {
     isbn: req.body.isbn,
     genre: typeof req.body.genre === 'undefined' ? [] : req.body.genre
   })
-  Book.findByIdAndUpdate(id, book, {}, function (err, thebook) {
+  Book.findByIdAndUpdate(id, book, {}, function (err, modifiedbook) {
     if (err) {
       return reject(err)
     }
-    if (thebook == null) {
+    if (modifiedbook == null) {
       return reject({ msg: '找不到该书籍' })
     } else {
-      resolve(thebook)
+      resolve(modifiedbook)
     }
   })
 }
 
-exports.book_detail = (id, resolve, reject) => {
+exports.detail = (id, resolve, reject) => {
   id = mongoose.Types.ObjectId(id)
   Book.findById(id)
     .populate('author')
@@ -64,18 +66,20 @@ exports.book_detail = (id, resolve, reject) => {
     .exec((err, book) => {
       if (err) {
         return reject(err)
+      } else {
+        resolve(book)
       }
-      resolve(book)
     })
 }
 
-exports.book_list = (resolve, reject) => {
+exports.list = (resolve, reject) => {
   Book.find({}, 'title author')
     .populate('author')
     .exec((err, books) => {
       if (err) {
         return reject(err)
+      } else {
+        resolve(books)
       }
-      resolve(books)
     })
 }
