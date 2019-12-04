@@ -1,15 +1,39 @@
 const Book = require('../models/book')
-const BookInstance = require('../models/bookinstance')
 const mongoose = require('mongoose')
 
-const async = require('async')
+
+exports.book_create = (req, resolve, reject) => {
+  console.log(req.body)
+
+  const book = new Book({
+    title: req.body.title,
+    author: req.body.author,
+    summary: req.body.summary,
+    isbn: req.body.isbn,
+    genre: (typeof req.body.genre === 'undefined') ? [] : req.body.genre
+  })
+
+  book.save(function (err) {
+    if (err) { return reject(err) }
+    resolve(book)
+  })
+}
 
 exports.book_delete = (id, resolve, reject) => {
-  res.send('未实现：删除藏书')
+  id = mongoose.Types.ObjectId(id)
+  Book.findById(id, (err, book) => {
+    if (err) { return reject(err); }
+    if (book != null) {
+      Book.findByIdAndRemove(id, (err) => {
+        if (err) { return reject(err); }
+        resolve({ id })
+      })
+    }
+    reject({ msg: '找不到该书籍' })
+  })
 }
 
 exports.book_update = (req, resolve, reject) => {
-  // TODO 参数校验整理到 util
 
   id = mongoose.Types.ObjectId(req.params.id)
   const book = new Book({
@@ -20,11 +44,15 @@ exports.book_update = (req, resolve, reject) => {
     isbn: req.body.isbn,
     genre: typeof req.body.genre === 'undefined' ? [] : req.body.genre
   })
-  Book.findByIdAndUpdate(id, book, {}, function(err, thebook) {
+  Book.findByIdAndUpdate(id, book, {}, function (err, thebook) {
     if (err) {
       return reject(err)
     }
-    resolve(thebook)
+    if (thebook == null) {
+      return reject({ msg: '找不到该书籍' })
+    } else {
+      resolve(thebook)
+    }
   })
 }
 

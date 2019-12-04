@@ -1,22 +1,23 @@
 const express = require('express')
 const router = express.Router()
+const validateRequest = require('../../util/validateRequest')
 
 // 导入控制器模块
 const book_controller = require('../../controllers/api/bookController')
-// const author_controller = require('../../controllers/api/authorController')
+const author_controller = require('../../controllers/api/authorController')
 // const genre_controller = require('../../controllers/api/genreController')
 // const book_instance_controller = require('../../controllers/api/bookinstanceController')
 
 /// 藏书路由 ///
 
 // 添加新的藏书
-// router.post('/book', book_controller.book_create)
+router.post('/book', validateRequest.book_update_validate, book_controller.book_create)
 
 // 删除藏书
-// router.delete('/book/:id', book_controller.book_delete)
+router.delete('/book/:id', book_controller.book_delete)
 
 // 更新藏书
-// router.put('/book/:id', book_controller.book_update)
+router.put('/book/:id', validateRequest.book_update_validate, book_controller.book_update)
 
 // 请求藏书
 router.get('/book/:id', book_controller.book_detail)
@@ -25,7 +26,7 @@ router.get('/book/:id', book_controller.book_detail)
 router.get('/books', book_controller.book_list)
 
 /// AUTHOR ROUTES ///
-/*
+
 // creating Author.
 router.post('/author', author_controller.author_create)
 
@@ -42,7 +43,7 @@ router.get('/author/:id', author_controller.author_detail)
 router.get('/authors', author_controller.author_list)
 
 /// GENRE ROUTES ///
-
+/*
 // creating Genre.
 router.post('/genre/create', genre_controller.genre_create)
 
