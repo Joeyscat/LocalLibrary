@@ -1,7 +1,6 @@
 const Book = require('../models/book')
 const mongoose = require('mongoose')
 
-
 exports.create = (req, resolve, reject) => {
   console.log(req.body)
 
@@ -10,11 +9,13 @@ exports.create = (req, resolve, reject) => {
     author: req.body.author,
     summary: req.body.summary,
     isbn: req.body.isbn,
-    genre: (typeof req.body.genre === 'undefined') ? [] : req.body.genre
+    genre: typeof req.body.genre === 'undefined' ? [] : req.body.genre
   })
 
-  book.save(function (err) {
-    if (err) { return reject(err) } else {
+  book.save(function(err) {
+    if (err) {
+      return reject(err)
+    } else {
       resolve(book)
     }
   })
@@ -23,10 +24,14 @@ exports.create = (req, resolve, reject) => {
 exports.delete = (id, resolve, reject) => {
   id = mongoose.Types.ObjectId(id)
   Book.findById(id, (err, book) => {
-    if (err) { return reject(err); }
+    if (err) {
+      return reject(err)
+    }
     if (book != null) {
-      Book.findByIdAndRemove(id, (err) => {
-        if (err) { return reject(err); }
+      Book.findByIdAndRemove(id, err => {
+        if (err) {
+          return reject(err)
+        }
         return resolve({ id })
       })
     } else {
@@ -36,7 +41,6 @@ exports.delete = (id, resolve, reject) => {
 }
 
 exports.update = (req, resolve, reject) => {
-
   id = mongoose.Types.ObjectId(req.params.id)
   const book = new Book({
     _id: id,
@@ -46,7 +50,7 @@ exports.update = (req, resolve, reject) => {
     isbn: req.body.isbn,
     genre: typeof req.body.genre === 'undefined' ? [] : req.body.genre
   })
-  Book.findByIdAndUpdate(id, book, {}, function (err, modifiedbook) {
+  Book.findByIdAndUpdate(id, book, {}, function(err, modifiedbook) {
     if (err) {
       return reject(err)
     }
@@ -73,8 +77,9 @@ exports.detail = (id, resolve, reject) => {
 }
 
 exports.list = (resolve, reject) => {
-  Book.find({}, 'title author')
-    .populate('author')
+  Book.find({}, 'title author genre summary isbn')
+    .populate('author', 'first_name family_name -_id')
+    .populate('genre', 'name -_id')
     .exec((err, books) => {
       if (err) {
         return reject(err)
