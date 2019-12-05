@@ -1,9 +1,8 @@
 const { body, sanitizeBody } = require('express-validator');
 
 
-exports.book_update_validate = [
+exports.book_create_validate = [
   (req, res, next) => {
-    console.log('validate ' + req.url)
     let genre = req.body.genre
     if (!(genre instanceof Array)) {
       if (typeof genre === 'undefined') {
@@ -25,11 +24,28 @@ exports.book_update_validate = [
   sanitizeBody('summary').trim().escape(),
   sanitizeBody('isbn').trim().escape()
 ]
+exports.book_update_validate = [
+  ...this.book_create_validate,
+  body('_id', '_id不能为空').trim().isLength({ min: 1 }),
+  sanitizeBody('_id').trim().escape()
+]
 
-exports.author_update_validate = [
+exports.author_create_validate = [
   body('first_name', '名字不能为空').trim().isLength({ min: 1 }),
   body('family_name', '姓氏不能为空').trim().isLength({ min: 1 }),
 
+  sanitizeBody('first_name').trim().escape(),
+  sanitizeBody('family_name').trim().escape(),
+  sanitizeBody('date_of_birth').trim().escape(),
+  sanitizeBody('date_of_death').trim().escape()
+]
+
+exports.author_update_validate = [
+  body('_id', '_id不能为空').trim().isLength({ min: 1 }),
+  body('first_name', '名字不能为空').trim().isLength({ min: 1 }),
+  body('family_name', '姓氏不能为空').trim().isLength({ min: 1 }),
+
+  sanitizeBody('_id').trim().escape(),
   sanitizeBody('first_name').trim().escape(),
   sanitizeBody('family_name').trim().escape(),
   sanitizeBody('date_of_birth').trim().escape(),

@@ -36,8 +36,7 @@ exports.delete = (id, resolve, reject) => {
 }
 
 exports.update = (req, resolve, reject) => {
-
-  id = mongoose.Types.ObjectId(req.params.id)
+  id = mongoose.Types.ObjectId(req.body._id)
   const author = new Author({
     _id: id,
     first_name: req.body.first_name,
@@ -45,7 +44,6 @@ exports.update = (req, resolve, reject) => {
     date_of_birth: req.body.date_of_birth,
     date_of_death: req.body.date_of_death,
   })
-
 
   Author.findByIdAndUpdate(id, author, {}, function (err, modifiedAuthor) {
     if (err) {

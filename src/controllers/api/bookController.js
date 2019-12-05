@@ -25,13 +25,12 @@ exports.delete = (req, res, next) => {
 
 exports.update = (req, res, next) => {
   const errors = validationResult(req)
-  console.error(errors)
 
   if (!errors.isEmpty()) {
-    res.json({ errors: errors.array() });
+    return res.json({ errors: errors.array() });
   } else {
     const resolve = book => {
-      service.detail(book._id, (bookDetail) => { res.json(bookDetail) }, next)
+      service.detail(book._id, (bookDetail) => { return res.json(bookDetail) }, next)
     }
     service.update(req, resolve, next)
   }
@@ -40,7 +39,7 @@ exports.update = (req, res, next) => {
 exports.detail = (req, res, next) => {
 
   service.detail(req.params.id, (book) => {
-    res.json(book)
+    return res.json(book)
   }, next)
 }
 
