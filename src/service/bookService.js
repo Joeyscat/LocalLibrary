@@ -63,27 +63,45 @@ exports.delete = (id, resolve, reject) => {
 }
 
 exports.update = (req, resolve, reject) => {
-  console.log('body ', req.body)
-
-  id = mongoose.Types.ObjectId(req.body._id)
-  const book = new Book({
-    _id: id,
-    title: req.body.title,
-    author: req.body.author,
-    summary: req.body.summary,
-    isbn: req.body.isbn,
-    genre: typeof req.body.genre === 'undefined' ? [] : req.body.genre
-  })
-  console.log(book)
-  Book.findByIdAndUpdate(id, book, {}, function (err, modifiedbook) {
+  const { _id, title, author, summary, isbn, genre } = req.body;
+  authorIds = [author._id]
+  genreIds = genre.map(g => g._id)
+  async.parallel({
+    book: function (callback) {
+      Book.findById(_id)
+        .exec(callback)
+    },
+    authors: function (callback) {
+      Author.find({ _id: [...authorIds] }, callback)
+    },
+    genres: function (callback) {
+      Genre.find({ _id: [...genreIds] }, callback)
+    }
+  }, function (err, results) {
     if (err) {
       return reject(err)
     }
-    if (modifiedbook == null) {
-      return reject({ msg: '找不到该书籍' })
-    } else {
-      resolve(modifiedbook)
+    if (results.book == null) {
+      return reject({ msg: '找不到该书籍-' + _id })
     }
+    if (results.authors.length == 0) {
+      return reject({ msg: '作者不可用-' + author._id })
+    }
+    if (results.genres.length == 0) {
+      return reject({ msg: '类型不可用' })
+    }
+    const book = new Book({ _id, title, author, summary, isbn, genre })
+    console.log(book)
+    Book.findByIdAndUpdate(_id, book, {}, function (err, modifiedbook) {
+      if (err) {
+        return reject(err)
+      }
+      if (modifiedbook == null) {
+        return reject({ msg: '找不到该书籍' })
+      } else {
+        resolve(modifiedbook)
+      }
+    })
   })
 }
 
