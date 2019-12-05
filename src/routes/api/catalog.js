@@ -5,7 +5,7 @@ const validateRequest = require('../../util/validateRequest')
 // 导入控制器模块
 const book_controller = require('../../controllers/api/bookController')
 const author_controller = require('../../controllers/api/authorController')
-// const genre_controller = require('../../controllers/api/genreController')
+const genre_controller = require('../../controllers/api/genreController')
 // const book_instance_controller = require('../../controllers/api/bookinstanceController')
 
 /// 藏书路由 ///
@@ -43,24 +43,24 @@ router.get('/author/:id', author_controller.detail)
 router.get('/authors', author_controller.list)
 
 /// GENRE ROUTES ///
-/*
-// creating Genre.
-router.post('/genre/create', genre_controller.genre_create)
 
-// delete Genre.
-router.delete('/genre/:id/delete', genre_controller.genre_delete)
+// 添加新的类型
+router.post('/genre', validateRequest.genre_create_validate, genre_controller.create)
 
-// update Genre.
-router.put('/genre/:id/update', genre_controller.genre_update)
+// 删除类型
+router.delete('/genre/:id', genre_controller.delete)
 
-// GET request for one Genre.
-router.get('/genre/:id', genre_controller.genre_detail)
+// 更新类型
+router.put('/genre', validateRequest.genre_update_validate, genre_controller.update)
 
-// GET request for list of all Genre.
-router.get('/genres', genre_controller.genre_list)
+// 类型详情
+router.get('/genre/:id', genre_controller.detail)
+
+// 所有类型
+router.get('/genres', genre_controller.list)
 
 /// BOOKINSTANCE ROUTES ///
-
+/*
 // POST request for creating BookInstance.
 router.post('/bookinstance', book_instance_controller.bookinstance_create)
 

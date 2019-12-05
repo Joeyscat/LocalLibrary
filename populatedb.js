@@ -11,10 +11,10 @@ if (!userArgs[0].startsWith('mongodb://')) {
 }
 
 const async = require('async');
-const Book = require('./model/book');
-const Author = require('./model/author');
-const Genre = require('./model/genre');
-const BookInstance = require('./model/bookinstance');
+const Book = require('./src/models/book');
+const Author = require('./src/models/author');
+const Genre = require('./src/models/genre');
+const BookInstance = require('./src/models/bookinstance');
 
 const mongoose = require('mongoose');
 const mongoDB = userArgs[0];

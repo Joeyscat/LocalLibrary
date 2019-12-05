@@ -35,3 +35,18 @@ exports.author_update_validate = [
   sanitizeBody('date_of_birth').trim().escape(),
   sanitizeBody('date_of_death').trim().escape()
 ]
+
+exports.genre_create_validate = [
+  body('name', '类型名称不能为空').trim().isLength({ min: 1 }),
+
+  sanitizeBody('name').trim().escape()
+]
+
+
+exports.genre_update_validate = [
+  body('name', '类型名称不能为空').trim().isLength({ min: 1 }),
+  body('_id', '_id不能为空').trim().isLength({ min: 1 }),
+
+  sanitizeBody('name').trim().escape(),
+  sanitizeBody('_id').trim().escape()
+]
