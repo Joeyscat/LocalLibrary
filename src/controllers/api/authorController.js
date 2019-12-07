@@ -1,52 +1,62 @@
 const service = require('../../service/authorService')
-const { validationResult } = require('express-validator');
-
+const { validationResult } = require('express-validator')
 
 exports.create = (req, res, next) => {
   const errors = validationResult(req)
-  console.error(errors)
 
   if (!errors.isEmpty()) {
-    res.json({ errors: errors.array() });
-  } else {
-    const resolve = author => {
-      service.detail(author._id, (authorDetail) => { res.json(authorDetail) }, next)
-    }
-    service.create(req, resolve, next)
+    return res.json({ errors: errors.array() })
   }
+  service
+    .create(req)
+    .then(result => {
+      return res.json(result)
+    })
+    .catch(err => next(err))
 }
 
 exports.delete = (req, res, next) => {
-
-  service.delete(req.params.id, (result) => {
-    res.json(result)
-  }, next)
+  service
+    .delete(req.params.id)
+    .then(result => {
+      return res.json(result)
+    })
+    .catch(err => next(err))
 }
 
 exports.update = (req, res, next) => {
   const errors = validationResult(req)
-  console.error(errors)
 
   if (!errors.isEmpty()) {
-    res.json({ errors: errors.array() });
-  } else {
-    const resolve = author => {
-      service.detail(author._id, (authorDetail) => { res.json(authorDetail) }, next)
-    }
-    service.update(req, resolve, next)
+    return res.json({ errors: errors.array() })
   }
+  service
+    .update(req)
+    .then(() => {
+      service
+        .detail(req.body._id)
+        .then(result => {
+          return res.json(result)
+        })
+        .catch(err => next(err))
+    })
+    .catch(err => next(err))
 }
 
 exports.detail = (req, res, next) => {
-
-  service.detail(req.params.id, (author) => {
-    res.json(author)
-  }, next)
+  service
+    .detail(req.params.id)
+    .then(result => {
+      res.json(result)
+    })
+    .catch(err => next(err))
 }
 
 exports.list = (req, res, next) => {
-
-  service.list((authors) => {
-    res.json(authors)
-  }, next)
+  service
+    .list()
+    .then(result => {
+      return res.json(result)
+    })
+    .catch(err => next(err))
 }

@@ -3,20 +3,14 @@ const { validationResult } = require('express-validator')
 
 exports.create = (req, res, next) => {
   const errors = validationResult(req)
-  console.error(errors)
 
   if (!errors.isEmpty()) {
     return res.json({ errors: errors.array() })
   }
   service
     .create(req)
-    .then(genre => {
-      service
-        .detail(genre._id)
-        .then(genreDetail => {
-          return res.json(genreDetail)
-        })
-        .catch(err => next(err))
+    .then(result => {
+      return res.json(result)
     })
     .catch(err => next(err))
 }
@@ -41,8 +35,8 @@ exports.update = (req, res, next) => {
     .then(() => {
       service
         .detail(req.body._id)
-        .then(genreDetail => {
-          return res.json(genreDetail)
+        .then(result => {
+          return res.json(result)
         })
         .catch(err => next(err))
     })
@@ -52,8 +46,8 @@ exports.update = (req, res, next) => {
 exports.detail = (req, res, next) => {
   service
     .detail(req.params.id)
-    .then(genre => {
-      return res.json(genre)
+    .then(result => {
+      return res.json(result)
     })
     .catch(err => next(err))
 }
