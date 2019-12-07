@@ -38,9 +38,9 @@ exports.update = (req, res, next) => {
   }
   service
     .update(req)
-    .then(genre => {
+    .then(() => {
       service
-        .detail(genre._id)
+        .detail(req.body._id)
         .then(genreDetail => {
           return res.json(genreDetail)
         })

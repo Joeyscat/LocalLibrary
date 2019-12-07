@@ -2,8 +2,8 @@ const Genre = require('../models/genre')
 const mongoose = require('mongoose')
 
 exports.create = req => {
-  const name = req.body.name
   return new Promise((resolve, reject) => {
+    const name = req.body.name
     Genre.findOne({ name: name }, (err, genre) => {
       if (err) {
         return reject(err)
@@ -26,8 +26,8 @@ exports.create = req => {
 }
 
 exports.delete = id => {
-  // id = mongoose.Types.ObjectId(id)
   return new Promise((resolve, reject) => {
+    // id = mongoose.Types.ObjectId(id)
     Genre.findById(id, (err, genre) => {
       if (err) {
         return reject(err)
@@ -47,27 +47,29 @@ exports.delete = id => {
 
 exports.update = req => {
   return new Promise((resolve, reject) => {
-    id = mongoose.Types.ObjectId(req.body._id)
-    const genre = new Genre({
-      _id: id,
-      name: req.body.name
-    })
+    const _id = mongoose.Types.ObjectId(req.body._id)
+    const name = req.body.name
     // TODO 不可修改为已存在的类型
-    Genre.findByIdAndUpdate(id, genre, {}, function(err, modifiedgenre) {
+    Genre.findOne({ name }, function(err, genre) {
       if (err) {
         return reject(err)
       }
-      if (modifiedgenre == null) {
-        return reject({ msg: '找不到该类型' })
+      if (genre) {
+        return reject({ msg: '已存在该类型-' + name })
       }
-      resolve(modifiedgenre)
+      Genre.updateOne({ _id }, { name }, {}, function(err, result) {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
     })
   })
 }
 
 exports.detail = id => {
-  // id = mongoose.Types.ObjectId(id)
   return new Promise((resolve, reject) => {
+    // id = mongoose.Types.ObjectId(id)
     Genre.findById(id, '-__v').exec((err, genre) => {
       if (err) {
         return reject(err)
