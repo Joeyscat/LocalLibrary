@@ -131,29 +131,27 @@ exports.detail = id => {
   })
 }
 
-exports.query = query => {
+exports.list = query => {
   return new Promise((resolve, reject) => {
-    const { title, isbn } = query
-    Book.find(query)
-      .populate('author')
-      .populate('genre')
-      .exec((err, result) => {
-        if (err) {
-          return reject(err)
-        }
-        if (result == null) {
-          return reject({ msg: '找不到该书籍', id })
-        }
-        resolve(result)
-      })
-  })
-}
-
-exports.list = () => {
-  return new Promise((resolve, reject) => {
-    Book.find({}, 'title author genre summary isbn')
+    let { title, isbn, page, size } = query
+    page = page ? page : 1
+    size = size ? size : 10
+    let querys = {}
+    let like = []
+    if (title) {
+      like.push({ title: { $regex: new RegExp(title, 'i') } })
+      querys.$or = like
+    }
+    if (isbn) {
+      querys.isbn = isbn
+    }
+    console.log(querys)
+    console.log(page, size, (page - 1) * size)
+    Book.find(querys, 'title author genre summary isbn')
       .populate('author', 'first_name family_name')
       .populate('genre', 'name')
+      .skip(+(page - 1) * size)
+      .limit(+size)
       .exec((err, result) => {
         if (err) {
           return reject(err)

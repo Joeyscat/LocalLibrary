@@ -57,18 +57,9 @@ exports.detail = (req, res, next) => {
     .catch(err => next(err))
 }
 
-exports.query = (req, res, next) => {
-  service
-    .query(req.query)
-    .then(result => {
-      return res.json(result)
-    })
-    .catch(err => next(err))
-}
-
 exports.list = (req, res, next) => {
   service
-    .list()
+    .list({})
     .then(result => {
       return res.json(result)
     })
