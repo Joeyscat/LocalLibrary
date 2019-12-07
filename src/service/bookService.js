@@ -131,6 +131,24 @@ exports.detail = id => {
   })
 }
 
+exports.query = query => {
+  return new Promise((resolve, reject) => {
+    const { title, isbn } = query
+    Book.find(query)
+      .populate('author')
+      .populate('genre')
+      .exec((err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        if (result == null) {
+          return reject({ msg: '找不到该书籍', id })
+        }
+        resolve(result)
+      })
+  })
+}
+
 exports.list = () => {
   return new Promise((resolve, reject) => {
     Book.find({}, 'title author genre summary isbn')

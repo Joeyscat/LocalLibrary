@@ -30,6 +30,9 @@ router.put(
 // 请求藏书
 router.get('/book/:id', book_controller.detail)
 
+// 通过title查询
+router.get('/book', book_controller.query)
+
 // 请求完整藏书列表
 router.get('/books', book_controller.list)
 
