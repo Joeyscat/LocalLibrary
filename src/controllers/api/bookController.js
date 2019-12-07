@@ -1,51 +1,67 @@
 const service = require('../../service/bookService')
-const { validationResult } = require('express-validator');
-
+const { validationResult } = require('express-validator')
 
 exports.create = (req, res, next) => {
   const errors = validationResult(req)
-  console.error(errors)
 
   if (!errors.isEmpty()) {
-    res.json({ errors: errors.array() });
-  } else {
-    const resolve = book => {
-      service.detail(book._id, (bookDetail) => { res.json(bookDetail) }, next)
-    }
-    service.create(req, resolve, next)
+    return res.json({ errors: errors.array() })
   }
+  service
+    .create(req)
+    .then(result => {
+      service
+        .detail(result._id)
+        .then(detail => {
+          res.json(detail)
+        })
+        .catch(err => next(err))
+    })
+    .catch(err => next(err))
 }
 
 exports.delete = (req, res, next) => {
-
-  service.delete(req.params.id, (result) => {
-    res.json(result)
-  }, next)
+  service
+    .delete(req.params.id)
+    .then(result => {
+      return res.json(result)
+    })
+    .catch(err => next(err))
 }
 
 exports.update = (req, res, next) => {
   const errors = validationResult(req)
-
   if (!errors.isEmpty()) {
-    return res.json({ errors: errors.array() });
-  } else {
-    const resolve = book => {
-      service.detail(book._id, (bookDetail) => { return res.json(bookDetail) }, next)
-    }
-    service.update(req, resolve, next)
+    return res.json({ errors: errors.array() })
   }
+
+  service
+    .update(req)
+    .then(() => {
+      service
+        .detail(req.body._id)
+        .then(result => {
+          return res.json(result)
+        })
+        .catch(err => next(err))
+    })
+    .catch(err => next(err))
 }
 
 exports.detail = (req, res, next) => {
-
-  service.detail(req.params.id, (book) => {
-    return res.json(book)
-  }, next)
+  service
+    .detail(req.params.id)
+    .then(result => {
+      return res.json(result)
+    })
+    .catch(err => next(err))
 }
 
 exports.list = (req, res, next) => {
-
-  service.list((books) => {
-    res.json(books)
-  }, next)
+  service
+    .list()
+    .then(result => {
+      return res.json(result)
+    })
+    .catch(err => next(err))
 }

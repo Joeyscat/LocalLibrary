@@ -67,25 +67,25 @@ exports.update = req => {
 
 exports.detail = id => {
   return new Promise((resolve, reject) => {
-    Genre.findById(id, '-__v').exec((err, genre) => {
+    Genre.findById(id, '-__v').exec((err, result) => {
       if (err) {
         return reject(err)
       }
-      if (genre == null) {
+      if (result == null) {
         return reject({ msg: '找不到该类型' })
       }
-      resolve(genre)
+      resolve(result)
     })
   })
 }
 
 exports.list = () => {
   return new Promise((resolve, reject) => {
-    Genre.find({}, '-__v').exec((err, genres) => {
+    Genre.find({}, '-__v').exec((err, result) => {
       if (err) {
         return reject(err)
       }
-      resolve(genres)
+      resolve(result)
     })
   })
 }
