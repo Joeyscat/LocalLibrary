@@ -3,6 +3,7 @@ var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
+var cors = require('cors')
 
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
@@ -11,6 +12,7 @@ const catalogApiRouter = require('./routes/api/catalog') // 导入 catalog api �
 const mongoDBUri = require('./secret')
 
 var app = express()
+app.use(cors())
 
 // Express 教程 3：使用数据库 (Mongoose)
 // https://developer.mozilla.org/zh-CN/docs/learn/Server-side/Express_Nodejs/mongoose
@@ -47,12 +49,12 @@ app.use('/catalog', catalogRouter) // 将 catalog 路由添加进中间件链
 app.use('/api/catalog', catalogApiRouter) // 将 catalog 路由添加进中间件链
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   next(createError(404))
 })
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
