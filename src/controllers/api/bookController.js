@@ -1,5 +1,6 @@
 const service = require('../../service/bookService')
 const { validationResult } = require('express-validator')
+const { success } = require('./responseBuilder')
 
 exports.create = (req, res, next) => {
   const errors = validationResult(req)
@@ -59,9 +60,9 @@ exports.detail = (req, res, next) => {
 
 exports.list = (req, res, next) => {
   service
-    .list({})
+    .list(req.query)
     .then(result => {
-      return res.json(result)
+      return res.json(success(result))
     })
     .catch(err => next(err))
 }

@@ -12,26 +12,26 @@ const book_instance_controller = require('../../controllers/api/bookinstanceCont
 
 // 添加新的藏书
 router.post(
-  '/book',
+  '/books',
   validateRequest.book_create_validate,
   book_controller.create
 )
 
 // 删除藏书
-router.delete('/book/:id', book_controller.delete)
+router.delete('/books/:id', book_controller.delete)
 
 // 更新藏书
 router.put(
-  '/book',
+  '/books',
   validateRequest.book_update_validate,
   book_controller.update
 )
 
 // 请求藏书
-router.get('/book/:id', book_controller.detail)
+router.get('/books/:id', book_controller.detail)
 
 // 藏书列表 + 条件查询
-router.get('/book', book_controller.list)
+router.get('/books', book_controller.list)
 
 /// AUTHOR ROUTES ///
 
@@ -62,23 +62,23 @@ router.get('/authors', author_controller.list)
 
 // 添加新的类型
 router.post(
-  '/genre',
+  '/genres',
   validateRequest.genre_create_validate,
   genre_controller.create
 )
 
 // 删除类型
-router.delete('/genre/:id', genre_controller.delete)
+router.delete('/genres/:id', genre_controller.delete)
 
 // 更新类型
 router.put(
-  '/genre',
+  '/genres',
   validateRequest.genre_update_validate,
   genre_controller.update
 )
 
 // 类型详情
-router.get('/genre/:id', genre_controller.detail)
+router.get('/genres/:id', genre_controller.detail)
 
 // 所有类型
 router.get('/genres', genre_controller.list)
@@ -86,16 +86,16 @@ router.get('/genres', genre_controller.list)
 /// BOOKINSTANCE ROUTES ///
 
 // POST request for creating BookInstance.
-router.post('/bookinstance', book_instance_controller.create)
+router.post('/bookinstances', book_instance_controller.create)
 
 // delete BookInstance.
-router.delete('/bookinstance/:id', book_instance_controller.delete)
+router.delete('/bookinstances/:id', book_instance_controller.delete)
 
 // POST request to update BookInstance.
-router.put('/bookinstance', book_instance_controller.update)
+router.put('/bookinstances', book_instance_controller.update)
 
 // GET request for one BookInstance.
-router.get('/bookinstance/:id', book_instance_controller.detail)
+router.get('/bookinstances/:id', book_instance_controller.detail)
 
 // GET request for list of all BookInstance.
 router.get('/bookinstances', book_instance_controller.list)

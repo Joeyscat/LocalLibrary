@@ -63,7 +63,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500)
   console.error('ERROR -----> ', req.method, req.url)
   if (req.url.startsWith('/api/')) {
-    res.json({ err })
+    res.json(err)
   } else {
     res.render(err)
   }

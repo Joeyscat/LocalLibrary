@@ -8,7 +8,7 @@ exports.create = req => {
         return reject(err)
       }
       if (result) {
-        return reject({ msg: '已存在该类型-' + name })
+        return reject('已存在该类型-' + name)
       }
       genre = new Genre({
         name: name
@@ -31,7 +31,7 @@ exports.delete = id => {
         return reject(err)
       }
       if (result == null) {
-        return reject({ msg: '找不到该类型' })
+        return reject('找不到该类型')
       }
       Genre.findByIdAndRemove(id, err => {
         if (err) {
@@ -53,7 +53,7 @@ exports.update = req => {
         return reject(err)
       }
       if (genre) {
-        return reject({ msg: '已存在该类型-' + name })
+        return reject('已存在该类型-' + name)
       }
       Genre.updateOne({ _id }, { name }, {}, function(err, result) {
         if (err) {
@@ -72,20 +72,38 @@ exports.detail = id => {
         return reject(err)
       }
       if (result == null) {
-        return reject({ msg: '找不到该类型' })
+        return reject('找不到该类型')
       }
       resolve(result)
     })
   })
 }
 
-exports.list = () => {
+exports.list = query => {
   return new Promise((resolve, reject) => {
-    Genre.find({}, '-__v').exec((err, result) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve(result)
-    })
+    let { name, page, limit } = query
+    console.log(query)
+    page = page ? page : 1
+    limit = limit ? limit : 10
+    let query_ = {}
+    let like = []
+    if (name) {
+      like.push({ name: { $regex: new RegExp(name, 'i') } })
+      query_.$or = like
+    }
+    Genre.find(query_, '-__v')
+      .skip(+(page - 1) * limit)
+      .limit(+limit)
+      .exec((err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        Genre.count(query_, function(err, count) {
+          if (err) {
+            return reject(err)
+          }
+          resolve({ items: result, total: count })
+        })
+      })
   })
 }

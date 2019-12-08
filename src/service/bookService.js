@@ -133,30 +133,33 @@ exports.detail = id => {
 
 exports.list = query => {
   return new Promise((resolve, reject) => {
-    let { title, isbn, page, size } = query
+    let { title, isbn, page, limit } = query
     page = page ? page : 1
-    size = size ? size : 10
-    let querys = {}
+    limit = limit ? limit : 10
+    let query_ = {}
     let like = []
     if (title) {
       like.push({ title: { $regex: new RegExp(title, 'i') } })
-      querys.$or = like
+      query_.$or = like
     }
     if (isbn) {
-      querys.isbn = isbn
+      query_.isbn = isbn
     }
-    console.log(querys)
-    console.log(page, size, (page - 1) * size)
-    Book.find(querys, 'title author genre summary isbn')
+    Book.find(query_, 'title author genre summary isbn')
       .populate('author', 'first_name family_name')
       .populate('genre', 'name')
-      .skip(+(page - 1) * size)
-      .limit(+size)
+      .skip(+(page - 1) * limit)
+      .limit(+limit)
       .exec((err, result) => {
         if (err) {
           return reject(err)
         }
-        resolve(result)
+        Book.count(query_, function(err, count) {
+          if (err) {
+            return reject(err)
+          }
+          resolve({ items: result, total: count })
+        })
       })
   })
 }
