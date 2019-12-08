@@ -6,14 +6,14 @@ exports.create = (req, res, next) => {
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
-    return res.json(failure(errors.array()))
+    return next(failure(errors.array()))
   }
   service
     .create(req)
     .then(result => {
       return res.json(success(result))
     })
-    .catch(err => res.json(failure(err)))
+    .catch(err => next(failure(err)))
 }
 
 exports.delete = (req, res, next) => {
@@ -29,7 +29,7 @@ exports.update = (req, res, next) => {
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
-    return res.json(failure(errors.array()))
+    return next(failure(errors.array()))
   }
   service
     .update(req)
@@ -39,9 +39,9 @@ exports.update = (req, res, next) => {
         .then(result => {
           return res.json(success(result))
         })
-        .catch(err => res.json(failure(err)))
+        .catch(err => next(failure(err)))
     })
-    .catch(err => res.json(failure(err)))
+    .catch(err => next(failure(err)))
 }
 
 exports.detail = (req, res, next) => {
@@ -50,7 +50,7 @@ exports.detail = (req, res, next) => {
     .then(result => {
       return res.json(success(result))
     })
-    .catch(err => res.json(failure(err)))
+    .catch(err => next(failure(err)))
 }
 
 exports.list = (req, res, next) => {
@@ -59,5 +59,5 @@ exports.list = (req, res, next) => {
     .then(result => {
       return res.json(success(result))
     })
-    .catch(err => res.json(failure(err)))
+    .catch(err => next(failure(err)))
 }
