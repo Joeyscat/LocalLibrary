@@ -9,14 +9,15 @@ const AuthorSchema = new Schema(
     family_name: { type: String, required: true, max: 100 },
     date_of_birth: { type: Date },
     date_of_death: { type: Date },
-  }
-);
+  }, {
+  toJSON: { virtuals: true }
+});
 
 // 虚拟属性'name'：表示作者全名
 AuthorSchema
   .virtual('name')
   .get(function () {
-    return this.family_name + ', ' + this.first_name;
+    return this.family_name + this.first_name;
   });
 
 // 虚拟属性'lifespan'：作者寿命
@@ -44,7 +45,7 @@ AuthorSchema
 AuthorSchema
   .virtual('url')
   .get(function () {
-    return '/catalog/author/' + this._id;
+    return '/catalog/authors/' + this._id;
   });
 
 // 导出 Author 模型

@@ -9,11 +9,13 @@ const BookSchema = new Schema({
   summary: { type: String, required: true },
   isbn: { type: String, required: true },
   genre: [{ type: Schema.Types.ObjectId, ref: 'Genre' }]
+}, {
+  toJSON: { virtuals: true }
 })
 
 // 虚拟属性'url'：藏书 URL
-BookSchema.virtual('url').get(function() {
-  return '/catalog/book/' + this._id
+BookSchema.virtual('url').get(function () {
+  return '/catalog/books/' + this._id
 })
 
 // 模式 -> 模块

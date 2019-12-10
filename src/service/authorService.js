@@ -10,7 +10,7 @@ exports.create = req => {
       date_of_death: req.body.date_of_death
     })
 
-    author.save(function(err) {
+    author.save(function (err) {
       if (err) {
         return reject(err)
       }
@@ -47,14 +47,14 @@ exports.update = req => {
       date_of_birth: req.body.date_of_birth,
       date_of_death: req.body.date_of_death
     }
-    Author.findOne({ _id }, function(err, result) {
+    Author.findOne({ _id }, function (err, result) {
       if (err) {
         return reject(err)
       }
       if (!result) {
-        return reject({ msg: '作者不存在-' + _id })
+        return reject('作者不存在-' + _id)
       }
-      Author.updateOne({ _id }, author, {}, function(err, result) {
+      Author.updateOne({ _id }, author, {}, function (err, result) {
         if (err) {
           return reject(err)
         }
@@ -71,21 +71,39 @@ exports.detail = id => {
         return reject(err)
       }
       if (res == null) {
-        return reject({ msg: '找不到该作者' })
+        return reject('找不到该作者-' + id)
       }
       resolve(res)
     })
   })
 }
 
-exports.list = () => {
-  // TODO 将姓名拼接
+exports.list = query => {
   return new Promise((resolve, reject) => {
-    Author.find({}, '-__v').exec((err, genres) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve(genres)
-    })
+    let { name, page, limit } = query
+    console.log(query)
+    page = page ? page : 1
+    limit = limit ? limit : 10
+    let query_ = {}
+    let like = []
+    if (name) {
+      like.push({ first_name: { $regex: new RegExp(name, 'i') } })
+      like.push({ family_name: { $regex: new RegExp(name, 'i') } })
+      query_.$or = like
+    }
+    Author.find(query_, '-__v')
+      .skip(+(page - 1) * limit)
+      .limit(+limit)
+      .exec((err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        Author.count(query_, function (err, count) {
+          if (err) {
+            return reject(err)
+          }
+          resolve({ items: result, total: count })
+        })
+      })
   })
 }

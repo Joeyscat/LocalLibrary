@@ -37,23 +37,23 @@ router.get('/books', book_controller.list)
 
 // 添加新作者
 router.post(
-  '/author',
+  '/authors',
   validateRequest.author_create_validate,
   author_controller.create
 )
 
 // 删除作者
-router.delete('/author/:id', author_controller.delete)
+router.delete('/authors/:id', author_controller.delete)
 
 // 更新作者
 router.put(
-  '/author',
+  '/authors',
   validateRequest.author_update_validate,
   author_controller.update
 )
 
 // 请求作者详情
-router.get('/author/:id', author_controller.detail)
+router.get('/authors/:id', author_controller.detail)
 
 // 请求所有作者
 router.get('/authors', author_controller.list)

@@ -4,7 +4,7 @@
   "description": "图书管理系统后台",
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www"
   },
   "dependencies": {
     "async": "^3.1.0",

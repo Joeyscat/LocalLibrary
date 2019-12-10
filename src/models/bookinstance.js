@@ -15,8 +15,9 @@ const BookInstanceSchema = new Schema({
     default: '馆藏维护'
   },
   due_back: { type: Date, default: Date.now }
-}
-);
+}, {
+  toJSON: { virtuals: true }
+});
 
 // 虚拟属性'due_back_formatted'：藏书副本 格式化的归还日期
 BookInstanceSchema
@@ -29,7 +30,7 @@ BookInstanceSchema
 BookInstanceSchema
   .virtual('url')
   .get(function () {
-    return '/catalog/bookinstance/' + this._id;
+    return '/catalog/bookinstances/' + this._id;
   });
 
 // 导出 BookInstancec 模型

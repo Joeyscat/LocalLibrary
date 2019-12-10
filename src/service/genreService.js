@@ -14,7 +14,7 @@ exports.create = req => {
         name: name
       })
 
-      genre.save(function(err) {
+      genre.save(function (err) {
         if (err) {
           return reject(err)
         }
@@ -48,14 +48,14 @@ exports.update = req => {
     const _id = req.body._id
     const name = req.body.name
     // TODO 不可修改为已存在的类型
-    Genre.findOne({ name }, function(err, genre) {
+    Genre.findOne({ name }, function (err, genre) {
       if (err) {
         return reject(err)
       }
       if (genre) {
         return reject('已存在该类型-' + name)
       }
-      Genre.updateOne({ _id }, { name }, {}, function(err, result) {
+      Genre.updateOne({ _id }, { name }, {}, function (err, result) {
         if (err) {
           return reject(err)
         }
@@ -72,7 +72,7 @@ exports.detail = id => {
         return reject(err)
       }
       if (result == null) {
-        return reject('找不到该类型')
+        return reject('找不到该类型-' + id)
       }
       resolve(result)
     })
@@ -98,7 +98,7 @@ exports.list = query => {
         if (err) {
           return reject(err)
         }
-        Genre.count(query_, function(err, count) {
+        Genre.count(query_, function (err, count) {
           if (err) {
             return reject(err)
           }
