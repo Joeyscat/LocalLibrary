@@ -1,11 +1,12 @@
 const service = require('../../service/bookinstanceService')
 const { validationResult } = require('express-validator')
+const { success, failure } = require('./responseBuilder')
 
 exports.create = (req, res, next) => {
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
-    return res.json({ errors: errors.array() })
+    return next(failure(errors.array()))
   }
   service
     .create(req)
@@ -13,26 +14,26 @@ exports.create = (req, res, next) => {
       service
         .detail(result._id)
         .then(detail => {
-          res.json(detail)
+          return res.json(success(detail))
         })
-        .catch(err => next(err))
+        .catch(err => next(failure(err)))
     })
-    .catch(err => next(err))
+    .catch(err => next(failure(err)))
 }
 
 exports.delete = (req, res, next) => {
   service
     .delete(req.params.id)
     .then(result => {
-      return res.json(result)
+      return res.json(success(result))
     })
-    .catch(err => next(err))
+    .catch(err => next(failure(err)))
 }
 
 exports.update = (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.json({ errors: errors.array() })
+    return next(failure(errors.array()))
   }
 
   service
@@ -41,27 +42,27 @@ exports.update = (req, res, next) => {
       service
         .detail(req.body._id)
         .then(result => {
-          return res.json(result)
+          return res.json(success(result))
         })
-        .catch(err => next(err))
+        .catch(err => next(failure(err)))
     })
-    .catch(err => next(err))
+    .catch(err => next(failure(err)))
 }
 
 exports.detail = (req, res, next) => {
   service
     .detail(req.params.id)
     .then(result => {
-      return res.json(result)
+      return res.json(success(result))
     })
-    .catch(err => next(err))
+    .catch(err => next(failure(err)))
 }
 
 exports.list = (req, res, next) => {
   service
-    .list()
+    .list(req.query)
     .then(result => {
-      return res.json(result)
+      return res.json(success(result))
     })
-    .catch(err => next(err))
+    .catch(err => next(failure(err)))
 }

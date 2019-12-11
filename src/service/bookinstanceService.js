@@ -101,8 +101,11 @@ exports.detail = id => {
   })
 }
 
-exports.list = () => {
+exports.list = query => {
   return new Promise((resolve, reject) => {
+    let { title, isbn, page, limit } = query
+    page = page ? page : 1
+    limit = limit ? limit : 10
     Bookinstance.find({}, '-__v')
       .populate({
         path: 'book',
@@ -111,12 +114,18 @@ exports.list = () => {
           path: 'genre author'
         }
       })
+      .skip(+(page - 1) * limit)
+      .limit(+limit)
       .exec((err, result) => {
         if (err) {
           return reject(err)
         }
-
-        return resolve(result)
+        Bookinstance.count({}, function(err, count) {
+          if (err) {
+            return reject(err)
+          }
+          resolve({ items: result, total: count })
+        })
       })
   })
 }
