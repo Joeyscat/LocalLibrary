@@ -3,13 +3,13 @@ const Book = require('../models/book')
 
 exports.create = req => {
   return new Promise((resolve, reject) => {
-    const { book, imprint, status, due_back } = req.body
+    const {book, imprint, status, due_back} = req.body
     Book.findById(book._id).exec((err, result) => {
       if (err) {
         return reject(err)
       }
       if (result == null) {
-        return reject({ msg: '找不到该书籍', _id: book._id })
+        return reject(`找不到该书籍 ${book._id}`)
       }
       const bookinstance = new Bookinstance({
         book,
@@ -17,7 +17,7 @@ exports.create = req => {
         status,
         due_back
       })
-      bookinstance.save(function(err) {
+      bookinstance.save(function (err) {
         if (err) {
           return reject(err)
         }
@@ -34,13 +34,13 @@ exports.delete = id => {
         return reject(err)
       }
       if (!result) {
-        return reject({ msg: '找不到该书籍', _id: id })
+        return reject(`找不到该书籍 ${id}`)
       }
       Bookinstance.findByIdAndRemove(id, err => {
         if (err) {
           return reject(err)
         }
-        return resolve({ id })
+        return resolve({id})
       })
     })
   })
@@ -48,13 +48,13 @@ exports.delete = id => {
 
 exports.update = req => {
   return new Promise((resolve, reject) => {
-    const { _id, book, imprint, status, due_back } = req.body
+    const {_id, book, imprint, status, due_back} = req.body
     Book.findById(book._id).exec((err, result) => {
       if (err) {
         return reject(err)
       }
       if (result == null) {
-        return reject({ msg: '找不到该书籍', _id: book._id })
+        return reject(`找不到该书籍 ${book._id}`)
       }
       const bookinstance = new Bookinstance({
         _id,
@@ -63,7 +63,7 @@ exports.update = req => {
         status,
         due_back
       })
-      Bookinstance.findByIdAndUpdate(_id, bookinstance, {}, function(
+      Bookinstance.findByIdAndUpdate(_id, bookinstance, {}, function (
         err,
         modifiedbookinstance
       ) {
@@ -71,7 +71,7 @@ exports.update = req => {
           return reject(err)
         }
         if (modifiedbookinstance == null) {
-          return reject({ msg: '找不到该书籍' })
+          return reject(`找不到该书籍 ${_id}`)
         }
         resolve(modifiedbookinstance)
       })
@@ -94,7 +94,7 @@ exports.detail = id => {
           return reject(err)
         }
         if (result == null) {
-          return reject({ err: '找不到该书籍' })
+          return reject(`找不到该书籍 ${id}`)
         }
         resolve(result)
       })
@@ -103,7 +103,7 @@ exports.detail = id => {
 
 exports.list = query => {
   return new Promise((resolve, reject) => {
-    let { title, isbn, page, limit } = query
+    let {title, isbn, page, limit} = query
     page = page ? page : 1
     limit = limit ? limit : 10
     Bookinstance.find({}, '-__v')
@@ -120,12 +120,25 @@ exports.list = query => {
         if (err) {
           return reject(err)
         }
-        Bookinstance.count({}, function(err, count) {
+        Bookinstance.count({}, function (err, count) {
           if (err) {
             return reject(err)
           }
-          resolve({ items: result, total: count })
+          resolve({items: result, total: count})
         })
       })
   })
 }
+
+exports.count = query => {
+  return new Promise((resolve, reject) => {
+    Bookinstance.count(query, function (err, count) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(count)
+    })
+  })
+}
+
+exports.module = this

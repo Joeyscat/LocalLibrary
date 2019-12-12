@@ -1,5 +1,5 @@
 const Author = require('../models/author')
-const mongoose = require('mongoose')
+const BookService = require('./bookService')
 
 exports.create = req => {
   return new Promise((resolve, reject) => {
@@ -26,14 +26,19 @@ exports.delete = id => {
         return reject(err)
       }
       if (result == null) {
-        return reject({ msg: '找不到该作者 -', id })
+        return reject(`找不到该作者- ${id}`)
       }
-      Author.findByIdAndRemove(id, err => {
-        if (err) {
-          return reject(err)
+      BookService.count({author: result}).then(count => {
+        if (count > 0) {
+          return reject('库中存在该作者的书籍，无法删除')
         }
-        return resolve({ id })
-      })
+        Author.findByIdAndRemove(id, err => {
+          if (err) {
+            return reject(err)
+          }
+          return resolve({id})
+        })
+      }).catch(err => reject(err))
     })
   })
 }
@@ -47,14 +52,14 @@ exports.update = req => {
       date_of_birth: req.body.date_of_birth,
       date_of_death: req.body.date_of_death
     }
-    Author.findOne({ _id }, function (err, result) {
+    Author.findOne({_id}, function (err, result) {
       if (err) {
         return reject(err)
       }
       if (!result) {
         return reject('作者不存在-' + _id)
       }
-      Author.updateOne({ _id }, author, {}, function (err, result) {
+      Author.updateOne({_id}, author, {}, function (err, result) {
         if (err) {
           return reject(err)
         }
@@ -66,29 +71,29 @@ exports.update = req => {
 
 exports.detail = id => {
   return new Promise((resolve, reject) => {
-    Author.findById(id, '-__v').exec((err, res) => {
+    Author.findById(id, '-__v').exec((err, result) => {
       if (err) {
         return reject(err)
       }
-      if (res == null) {
-        return reject('找不到该作者-' + id)
+      if (result == null) {
+        return reject(`找不到该作者 ${id}`)
       }
-      resolve(res)
+      resolve(result)
     })
   })
 }
 
 exports.list = query => {
   return new Promise((resolve, reject) => {
-    let { name, page, limit } = query
+    let {name, page, limit} = query
     console.log(query)
     page = page ? page : 1
-    limit = limit ? limit : 10
+    limit = limit ? limit : 100
     let query_ = {}
     let like = []
     if (name) {
-      like.push({ first_name: { $regex: new RegExp(name, 'i') } })
-      like.push({ family_name: { $regex: new RegExp(name, 'i') } })
+      like.push({first_name: {$regex: new RegExp(name, 'i')}})
+      like.push({family_name: {$regex: new RegExp(name, 'i')}})
       query_.$or = like
     }
     Author.find(query_, '-__v')
@@ -102,7 +107,7 @@ exports.list = query => {
           if (err) {
             return reject(err)
           }
-          resolve({ items: result, total: count })
+          resolve({items: result, total: count})
         })
       })
   })
