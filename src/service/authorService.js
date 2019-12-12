@@ -85,17 +85,11 @@ exports.detail = id => {
 
 exports.list = query => {
   return new Promise((resolve, reject) => {
-    let {name, page, limit} = query
+    let {page, limit} = query
     console.log(query)
     page = page ? page : 1
     limit = limit ? limit : 100
     let query_ = {}
-    let like = []
-    if (name) {
-      like.push({first_name: {$regex: new RegExp(name, 'i')}})
-      like.push({family_name: {$regex: new RegExp(name, 'i')}})
-      query_.$or = like
-    }
     Author.find(query_, '-__v')
       .skip(+(page - 1) * limit)
       .limit(+limit)
@@ -104,6 +98,38 @@ exports.list = query => {
           return reject(err)
         }
         Author.count(query_, function (err, count) {
+          if (err) {
+            return reject(err)
+          }
+          resolve({items: result, total: count})
+        })
+      })
+  })
+}
+
+exports.listName = query =>{
+  return new Promise((resolve, reject) => {
+    let {name, page, limit} = query
+    console.log(query)
+    page = page ? page : 1
+    limit = limit ? limit : 100
+    let match = {}
+    let like = []
+    if (name) {
+      like.push({name: {$regex: new RegExp(name, 'i')}})
+      match.$or = like
+    }
+    // http://www.uwenku.com/question/p-gmmzqtug-rr.html
+      Author.aggregate([
+        {$project:{name:{$concat:["$family_name","$first_name"]}}},
+        {$match:match},
+        {$skip: +(page - 1) * limit},
+        {$limit: +limit}])
+      .exec((err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        Author.count(match, function (err, count) {
           if (err) {
             return reject(err)
           }

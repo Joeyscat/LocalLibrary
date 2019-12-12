@@ -67,6 +67,9 @@ router.get('/authors/:id', author_controller.detail)
 // 请求所有作者
 router.get('/authors', author_controller.list)
 
+// 请求所有作者(id+name)
+router.get('/authorsName', author_controller.listName)
+
 /// GENRE ROUTES ///
 
 // 添加新的类型
