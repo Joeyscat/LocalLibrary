@@ -66,3 +66,21 @@ exports.genre_update_validate = [
   sanitizeBody('name').trim().escape(),
   sanitizeBody('_id').trim().escape()
 ]
+
+exports.bookinstance_create_validate = [
+  body('book', '书籍不能为空').custom((book)=>{
+    return Object.keys(book).length !== 0
+  }),
+  body('status', '状态不能为空').trim().isLength({ min: 1 }),
+  body('imprint', '出版社不能为空').trim().isLength({ min: 1 }),
+  body('due_back', '归还日期不能为空').isLength({ min: 1 }),
+
+  sanitizeBody('status').trim().escape(),
+  sanitizeBody('imprint').trim().escape(),
+  sanitizeBody('due_back').trim().escape()
+]
+exports.bookinstance_update_validate = [
+  ...this.bookinstance_create_validate,
+  body('_id', '_id不能为空').trim().isLength({ min: 1 }),
+  sanitizeBody('_id').trim().escape()
+]

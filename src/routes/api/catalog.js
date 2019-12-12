@@ -1,6 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const validateRequest = require('../../util/validateRequest')
+const {
+  book_create_validate,
+  book_update_validate,
+  author_create_validate,
+  author_update_validate,
+  genre_create_validate,
+  genre_update_validate,
+  bookinstance_create_validate,
+  bookinstance_update_validate
+} = require('../../util/validateRequest')
 
 // 导入控制器模块
 const book_controller = require('../../controllers/api/bookController')
@@ -13,7 +22,7 @@ const book_instance_controller = require('../../controllers/api/bookinstanceCont
 // 添加新的藏书
 router.post(
   '/books',
-  validateRequest.book_create_validate,
+  book_create_validate,
   book_controller.create
 )
 
@@ -23,7 +32,7 @@ router.delete('/books/:id', book_controller.delete)
 // 更新藏书
 router.put(
   '/books',
-  validateRequest.book_update_validate,
+  book_update_validate,
   book_controller.update
 )
 
@@ -38,7 +47,7 @@ router.get('/books', book_controller.list)
 // 添加新作者
 router.post(
   '/authors',
-  validateRequest.author_create_validate,
+  author_create_validate,
   author_controller.create
 )
 
@@ -48,7 +57,7 @@ router.delete('/authors/:id', author_controller.delete)
 // 更新作者
 router.put(
   '/authors',
-  validateRequest.author_update_validate,
+  author_update_validate,
   author_controller.update
 )
 
@@ -63,7 +72,7 @@ router.get('/authors', author_controller.list)
 // 添加新的类型
 router.post(
   '/genres',
-  validateRequest.genre_create_validate,
+  genre_create_validate,
   genre_controller.create
 )
 
@@ -73,7 +82,7 @@ router.delete('/genres/:id', genre_controller.delete)
 // 更新类型
 router.put(
   '/genres',
-  validateRequest.genre_update_validate,
+  genre_update_validate,
   genre_controller.update
 )
 
@@ -83,21 +92,21 @@ router.get('/genres/:id', genre_controller.detail)
 // 所有类型
 router.get('/genres', genre_controller.list)
 
-/// BOOKINSTANCE ROUTES ///
+/// 书籍实例路由 ///
 
-// POST request for creating BookInstance.
-router.post('/bookinstances', book_instance_controller.create)
+// 新增书籍实例
+router.post('/bookinstances', bookinstance_create_validate, book_instance_controller.create)
 
-// delete BookInstance.
+// 删除书籍实例
 router.delete('/bookinstances/:id', book_instance_controller.delete)
 
-// POST request to update BookInstance.
-router.put('/bookinstances', book_instance_controller.update)
+// 更新书籍实例
+router.put('/bookinstances', bookinstance_update_validate, book_instance_controller.update)
 
-// GET request for one BookInstance.
+// 书籍实例详情
 router.get('/bookinstances/:id', book_instance_controller.detail)
 
-// GET request for list of all BookInstance.
+// 书籍实例列表
 router.get('/bookinstances', book_instance_controller.list)
 
 module.exports = router
