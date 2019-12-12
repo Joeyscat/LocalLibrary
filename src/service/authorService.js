@@ -10,7 +10,7 @@ exports.create = req => {
       date_of_death: req.body.date_of_death
     })
 
-    author.save(function (err) {
+    author.save(function(err) {
       if (err) {
         return reject(err)
       }
@@ -28,17 +28,19 @@ exports.delete = id => {
       if (result == null) {
         return reject(`找不到该作者- ${id}`)
       }
-      BookService.count({author: result}).then(count => {
-        if (count > 0) {
-          return reject('库中存在该作者的书籍，无法删除')
-        }
-        Author.findByIdAndRemove(id, err => {
-          if (err) {
-            return reject(err)
+      BookService.count({ author: result })
+        .then(count => {
+          if (count > 0) {
+            return reject('库中存在该作者的书籍，无法删除')
           }
-          return resolve({id})
+          Author.findByIdAndRemove(id, err => {
+            if (err) {
+              return reject(err)
+            }
+            return resolve({ id })
+          })
         })
-      }).catch(err => reject(err))
+        .catch(err => reject(err))
     })
   })
 }
@@ -52,14 +54,14 @@ exports.update = req => {
       date_of_birth: req.body.date_of_birth,
       date_of_death: req.body.date_of_death
     }
-    Author.findOne({_id}, function (err, result) {
+    Author.findOne({ _id }, function(err, result) {
       if (err) {
         return reject(err)
       }
       if (!result) {
         return reject('作者不存在-' + _id)
       }
-      Author.updateOne({_id}, author, {}, function (err, result) {
+      Author.updateOne({ _id }, author, {}, function(err, result) {
         if (err) {
           return reject(err)
         }
@@ -85,7 +87,7 @@ exports.detail = id => {
 
 exports.list = query => {
   return new Promise((resolve, reject) => {
-    let {page, limit} = query
+    let { page, limit } = query
     console.log(query)
     page = page ? page : 1
     limit = limit ? limit : 100
@@ -97,44 +99,45 @@ exports.list = query => {
         if (err) {
           return reject(err)
         }
-        Author.count(query_, function (err, count) {
+        Author.count(query_, function(err, count) {
           if (err) {
             return reject(err)
           }
-          resolve({items: result, total: count})
+          resolve({ items: result, total: count })
         })
       })
   })
 }
 
-exports.listName = query =>{
+exports.listName = query => {
   return new Promise((resolve, reject) => {
-    let {name, page, limit} = query
+    let { name, page, limit } = query
     console.log(query)
     page = page ? page : 1
     limit = limit ? limit : 100
     let match = {}
     let like = []
     if (name) {
-      like.push({name: {$regex: new RegExp(name, 'i')}})
+      like.push({ name: { $regex: new RegExp(name, 'i') } })
       match.$or = like
     }
     // http://www.uwenku.com/question/p-gmmzqtug-rr.html
-      Author.aggregate([
-        {$project:{name:{$concat:["$family_name","$first_name"]}}},
-        {$match:match},
-        {$skip: +(page - 1) * limit},
-        {$limit: +limit}])
-      .exec((err, result) => {
+    Author.aggregate([
+      { $project: { name: { $concat: ['$family_name', '$first_name'] } } },
+      { $match: match },
+      { $skip: +(page - 1) * limit },
+      { $limit: +limit }
+    ]).exec((err, result) => {
+      if (err) {
+        return reject(err)
+      }
+      Author.count(match, function(err, count) {
         if (err) {
           return reject(err)
         }
-        Author.count(match, function (err, count) {
-          if (err) {
-            return reject(err)
-          }
-          resolve({items: result, total: count})
-        })
+        console.log({ items: result, total: count })
+        resolve({ items: result, total: count })
       })
+    })
   })
 }
