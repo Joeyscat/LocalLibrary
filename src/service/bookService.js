@@ -163,3 +163,17 @@ exports.list = query => {
       })
   })
 }
+
+exports.count = query => {
+  return new Promise((resolve, reject) => {
+    Book.count(query, function(err, count) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(count)
+    })
+  })
+}
+
+
+exports.module = this

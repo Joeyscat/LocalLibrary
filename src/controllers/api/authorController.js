@@ -22,7 +22,7 @@ exports.delete = (req, res, next) => {
     .then(result => {
       return res.json(success(result))
     })
-    .catch(err => res.json(failure(err)))
+    .catch(err => next(failure(err)))
 }
 
 exports.update = (req, res, next) => {
