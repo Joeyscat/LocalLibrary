@@ -66,3 +66,12 @@ exports.list = (req, res, next) => {
     })
     .catch(err => next(failure(err)))
 }
+
+exports.listByName = (req, res, next) => {
+  service
+    .simpleList(req.query)
+    .then(result => {
+      return res.json(success(result))
+    })
+    .catch(err => next(failure(err)))
+}

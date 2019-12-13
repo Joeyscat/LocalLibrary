@@ -23,10 +23,10 @@ exports.create = req => {
         if (err) {
           return reject(err)
         }
-        if (results.authors.length == 0) {
+        if (results.authors.length === 0) {
           return reject({msg: '作者不可用', author})
         }
-        if (results.genres.length == 0) {
+        if (results.genres.length === 0) {
           return reject({msg: '类型不可用', genre})
         }
         const book = new Book({
@@ -76,8 +76,8 @@ exports.delete = id => {
 exports.update = req => {
   return new Promise((resolve, reject) => {
     const {_id, title, author, summary, isbn, genre} = req.body
-    authorIds = [author._id]
-    genreIds = genre.map(g => g._id)
+    const authorIds = [author._id]
+    const genreIds = genre.map(g => g._id)
     async.parallel(
       {
         book: function (callback) {
@@ -97,10 +97,10 @@ exports.update = req => {
         if (results.book == null) {
           return reject(`找不到该书籍 ${_id}`)
         }
-        if (results.authors.length == 0) {
+        if (results.authors.length === 0) {
           return reject({msg: '作者不可用', author})
         }
-        if (results.genres.length == 0) {
+        if (results.genres.length === 0) {
           return reject({msg: '类型不可用', genre})
         }
         const book = new Book({_id, title, author, summary, isbn, genre})
@@ -139,19 +139,8 @@ exports.detail = id => {
 
 exports.list = query => {
   return new Promise((resolve, reject) => {
-    let {title, isbn, page, limit} = query
-    page = page ? page : 1
-    limit = limit ? limit : 10
-    let query_ = {}
-    let like = []
-    if (title) {
-      like.push({title: {$regex: new RegExp(title, 'i')}})
-      query_.$or = like
-    }
-    if (isbn) {
-      query_.isbn = isbn
-    }
-    Book.find(query_, 'title author genre summary isbn')
+    const { page, limit, match } = buildQuery(query)
+    Book.find(match, 'title author genre summary isbn')
       .populate('author', 'first_name family_name')
       .populate('genre', 'name')
       .skip(+(page - 1) * limit)
@@ -160,7 +149,7 @@ exports.list = query => {
         if (err) {
           return reject(err)
         }
-        Book.count(query_, function (err, count) {
+        Book.count(match, function (err, count) {
           if (err) {
             return reject(err)
           }
@@ -181,5 +170,36 @@ exports.count = query => {
   })
 }
 
+exports.simpleList = query => {
+  return new Promise((resolve, reject) => {
+    const { page, limit, match } = buildQuery(query)
+    Book.find(match, 'title author')
+      .populate('author', 'first_name family_name')
+      .skip(+(page - 1) * limit)
+      .limit(+limit)
+      .exec((err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve({ items: result})
+      })
+  })
+}
+
+const buildQuery = (query) => {
+  let { title, isbn, page, limit } = query
+  page = page ? page : 1
+  limit = limit ? limit : 10
+  let match = {}
+  let like = []
+  if (title) {
+    like.push({ title: { $regex: new RegExp(title, 'i') } })
+    match.$or = like
+  }
+  if (isbn) {
+    match.isbn = isbn
+  }
+  return { page, limit, match }
+}
 
 exports.module = this

@@ -42,6 +42,9 @@ router.get('/books/:id', book_controller.detail)
 // 藏书列表 + 条件查询
 router.get('/books', book_controller.list)
 
+// 根据姓名查询藏书(id+name)
+router.get('/booksByName', book_controller.listByName)
+
 /// AUTHOR ROUTES ///
 
 // 添加新作者
@@ -67,8 +70,8 @@ router.get('/authors/:id', author_controller.detail)
 // 请求所有作者
 router.get('/authors', author_controller.list)
 
-// 请求所有作者(id+name)
-router.get('/authorsName', author_controller.listName)
+// 根据姓名查询作者(id+name)
+router.get('/authorsByName', author_controller.listName)
 
 /// GENRE ROUTES ///
 

@@ -114,7 +114,7 @@ exports.listName = query => {
     let { name, page, limit } = query
     console.log(query)
     page = page ? page : 1
-    limit = limit ? limit : 100
+    limit = limit ? limit : 10
     let match = {}
     let like = []
     if (name) {
@@ -131,13 +131,7 @@ exports.listName = query => {
       if (err) {
         return reject(err)
       }
-      Author.count(match, function(err, count) {
-        if (err) {
-          return reject(err)
-        }
-        console.log({ items: result, total: count })
-        resolve({ items: result, total: count })
-      })
+      resolve({ items: result })
     })
   })
 }
