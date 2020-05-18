@@ -2,13 +2,17 @@
 
 #### 项目简介
 
-。。。
+基于 Express.js + MongoDB 的图书管理系统后台
+
+[前台项目](https://github.com/Joeyscat/LocalLibraryClient.git)
 
 #### 运行项目
 
-1.  下载或克隆源码 https://gitee.com/Joeyscat/LocalLibrary.git
-2.  项目根目录下执行 npm i
-3.  npm run devstart
+```bash
+$ git clone https://github.com/Joeyscat/LocalLibrary.git
+$ cd LocalLibrary/
+$ npm run start
+```
 
 #### 项目结构
 
