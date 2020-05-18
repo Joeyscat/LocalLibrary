@@ -1,35 +1,84 @@
 # LocalLibrary
 
-#### Software Architecture
-Software architecture description
+#### 项目简介
 
-#### 安装使用
+。。。
+
+#### 运行项目
 
 1.  下载或克隆源码 https://gitee.com/Joeyscat/LocalLibrary.git
 2.  项目根目录下执行 npm i
 3.  npm run devstart
 
-#### 介绍
+#### 项目结构
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```bash
+.
+├── LICENSE
+├── README.md
+├── bin
+│   └── www
+├── package.json
+├── populatedb.js
+├── public
+│   ├── images
+│   │   └── avatar.gif
+│   ├── javascripts
+│   │   ├── bootstrap.min.js
+│   │   └── jquery.min.js
+│   └── stylesheets
+│       ├── bootstrap.min.css
+│       └── style.css
+├── src
+│   ├── app.js
+│   ├── controllers
+│   │   ├── api
+│   │   │   ├── authorController.js
+│   │   │   ├── bookController.js
+│   │   │   ├── bookinstanceController.js
+│   │   │   ├── genreController.js
+│   │   │   └── responseBuilder.js
+│   │   ├── authorController.js
+│   │   ├── bookController.js
+│   │   ├── bookinstanceController.js
+│   │   └── genreController.js
+│   ├── models
+│   │   ├── author.js
+│   │   ├── book.js
+│   │   ├── bookinstance.js
+│   │   └── genre.js
+│   ├── plugins
+│   │   └── mongoPlugin.js
+│   ├── routes
+│   │   ├── api
+│   │   │   └── catalog.js
+│   │   ├── catalog.js
+│   │   ├── index.js
+│   │   └── users.js
+│   ├── secret.js
+│   ├── service
+│   │   ├── authorService.js
+│   │   ├── bookService.js
+│   │   ├── bookinstanceService.js
+│   │   └── genreService.js
+│   └── util
+│       └── validateRequest.js
+└── views
+    ├── author_delete.pug
+    ├── author_detail.pug
+    ├── author_form.pug
+    ├── author_list.pug
+    ├── book_detail.pug
+    ├── book_form.pug
+    ├── book_list.pug
+    ├── bookinstance_detail.pug
+    ├── bookinstance_form.pug
+    ├── bookinstance_list.pug
+    ├── error.pug
+    ├── genre_detail.pug
+    ├── genre_form.pug
+    ├── genre_list.pug
+    ├── index.pug
+    └── layout.pug
 
-#### Contribution
-
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
-
-#### TODO
-[在数据库中存储姓名](http://www.ojit.com/article/1668654)
-
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+```
